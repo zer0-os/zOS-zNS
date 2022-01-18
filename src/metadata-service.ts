@@ -1,6 +1,6 @@
 import { SuperAgent } from 'superagent';
 
-import { rootDomainId } from './config';
+import { rootDomainId, ipfsBaseUrl } from './config';
 
 export interface DomainMetadata {
   title: string;
@@ -9,7 +9,7 @@ export interface DomainMetadata {
 }
 
 export class MetadataService {
-  constructor(private httpClient: SuperAgent, private config = { rootDomainId }) { }
+  constructor(private httpClient: SuperAgent, private config = { rootDomainId, ipfsBaseUrl }) { }
 
   async load(url: string): Promise<DomainMetadata> {
     const normalizedUrl = this.normalizeUrl(url);
