@@ -1,5 +1,5 @@
 {
-  "name": "zos-zns",
+  "name": "@zer0-os/zos-zns",
   "version": "0.0.1",
   "description": "zns client for zOS",
   "main": "index.js",
