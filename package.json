@@ -9,10 +9,11 @@
   },
   "author": "",
   "license": "ISC",
-  "files": [
-    "dist",
-    "node_modules"
-  ],
+  "files": [ "dist" ],
+  "repository": "https://github.com/zer0-os/zOS-zNS.git",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "devDependencies": {
     "@babel/core": "^7.16.7",
     "@babel/preset-typescript": "^7.16.7",
