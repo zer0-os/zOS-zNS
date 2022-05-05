@@ -14,6 +14,7 @@ describe('ZnsClient', () => {
 
     const provider = {
       getSubdomainsById: () => [],
+      getDomainsByName: () => [],
       ...providerOverrides,
     };
 
@@ -234,5 +235,28 @@ describe('ZnsClient', () => {
     }];
 
     expect(await client.getFeed()).toMatchObject(feedItems);
+  });
+
+  it('returns search as feed items', async () => {
+    const getDomainsByName = async () => [
+      { id: 'first-id', name: 'the.first.domain.name' },
+      { id: 'second-id', name: 'the.second.domain.name' },
+      { id: 'third-id', name: 'the.third.domain.name' },
+    ];
+
+    const client = subject({ getDomainsByName });
+
+    const feedItems = [{
+      id: 'first-id',
+      znsRoute: 'the.first.domain.name',
+    }, {
+      id: 'second-id',
+      znsRoute: 'the.second.domain.name',
+    }, {
+      id: 'third-id',
+      znsRoute: 'the.third.domain.name',
+    }];
+
+    expect(await client.search('anything')).toMatchObject(feedItems);
   });
 });

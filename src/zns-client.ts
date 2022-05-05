@@ -23,6 +23,16 @@ export class ZnsClient {
     return domains.map(this.mapDomainToFeedItem);
   }
 
+  async search(pattern) {
+    const domains = await this.provider.getDomainsByName(pattern);
+
+    for (var domain of domains) {
+      domain.metadata = await this.metadataService.load(domain.metadataUri);
+    }
+
+    return domains.map(this.mapDomainToFeedItem);
+  }
+
   resolveIdFromName(domainName: string) {
     const rootId = this.config.rootDomainId;
 
