@@ -5,7 +5,11 @@ import { getForProvider } from './config';
 import { MetadataService } from './metadata-service';
 import { ZnsClient } from './zns-client';
 
-export const client = {
+export interface ZnsClientFactory {
+  get(web3Provider: any): Promise<ZnsClient>;
+}
+
+export const client: ZnsClientFactory = {
   async get(web3Provider: any) {
     const config = await getForProvider(web3Provider);
 
