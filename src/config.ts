@@ -16,6 +16,8 @@ async function extractChainFromProvider(provider) {
   switch (network.name) {
     case 'kovan':
       return Chains.Kovan;
+    case 'rinkeby':
+      return Chains.Rinkeby;
   }
 }
 
@@ -23,5 +25,7 @@ export async function getForProvider(provider: any) {
   switch (await extractChainFromProvider(provider)) {
     case Chains.Kovan:
       return configuration.kovanConfiguration(provider);
+    case Chains.Rinkeby:
+      return configuration.rinkebyConfiguration(provider);
   }
 }
