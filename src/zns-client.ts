@@ -26,10 +26,6 @@ export class ZnsClient {
   async search(pattern) {
     const domains = await this.provider.getDomainsByName(pattern);
 
-    for (var domain of domains) {
-      domain.metadata = await this.metadataService.load(domain.metadataUri);
-    }
-
     return domains.map(this.mapDomainToFeedItem);
   }
 
