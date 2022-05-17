@@ -9,6 +9,8 @@ describe('ZnsClient', () => {
 
     const metadataService = {
       load: () => ({} as any),
+      normalizeUrl: () => null,
+      extractIpfsContentId: () => null,
       ...metadataServiceOverrides,
     };
 
@@ -65,119 +67,35 @@ describe('ZnsClient', () => {
     expect(getSubdomainsById).toBeCalledWith(id)
   });
 
-  it('loads metadata for domain', async () => {
+  it('verifies metadataUrl for domain', async () => {
     const getSubdomainsById = async () => [
-      { id: 'first-id', name: 'the.first.domain.name', metadataUri: 'http://example.com/what' },
+      { id: 'first-id', name: 'the.first.domain.name', metadataUri: 'ipfs://QmedrtBJfbn2xFTRqM8DEVJpCSwkaQgTHCFfHc6Q12345' },
     ];
 
-    const loadMetadata = jest.fn();
+    const metadataService = {
+      normalizeUrl: () => 'http://subdomain.domain.com/QmedrtBJfbn2xFTRqM8DEVJpCSwkaQgTHCFfHc6Q12345',
+      extractIpfsContentId: () => 'QmedrtBJfbn2xFTRqM8DEVJpCSwkaQgTHCFfHc6Q12345',
+    };
 
-    const client = subject({ getSubdomainsById }, { load: loadMetadata });
+    const client = subject({ getSubdomainsById }, metadataService);
 
-    await client.getFeed('the-id');
+    const result = await client.getFeed('the-id');
 
-    expect(loadMetadata).toBeCalledWith('http://example.com/what');
-  });
-
-  it('merges metadata with domains', async () => {
-    const getSubdomainsById = async () => [
-      { id: 'first-id', name: 'the.first.domain.name', metadataUri: 'http://example.com/what-one' },
-      { id: 'second-id', name: 'the.second.domain.name', metadataUri: 'http://example.com/what-two' },
-    ];
-
-    const loadMetadata = jest.fn((url) => {
-      if (url === 'http://example.com/what-one') {
-        return {
-          title: 'first-title',
-          description: 'first-description',
-          image: 'http://example.com/first-image.jpg',
-        };
-      }
-
-      return {
-        title: 'second-title',
-        description: 'second-description',
-        image: 'http://example.com/second-image.jpg',
-      };
-    });
-
-    const client = subject({ getSubdomainsById }, { load: loadMetadata });
-
-    const items = await client.getFeed('the-id');
-
-    expect(items).toMatchObject([
+    expect(result).toMatchObject([
       {
-        id: 'first-id',
-        title: 'first-title',
-        description: 'first-description',
-        imageUrl: 'http://example.com/first-image.jpg',
+        'description': 'the.first.domain.name',
+        'id': 'first-id',
+        'imageUrl': undefined,
+        'ipfsContentId': 'QmedrtBJfbn2xFTRqM8DEVJpCSwkaQgTHCFfHc6Q12345',
+        'metadataUrl': 'http://subdomain.domain.com/QmedrtBJfbn2xFTRqM8DEVJpCSwkaQgTHCFfHc6Q12345',
+        'title': 'the.first.domain.name',
+        'znsRoute': 'the.first.domain.name',
       },
-      {
-        id: 'second-id',
-        title: 'second-title',
-        description: 'second-description',
-        imageUrl: 'http://example.com/second-image.jpg',
-      },
-    ]);
+      ]
+    );
   });
-
-  it('defaults title and description if metadata is null', async () => {
-    const getSubdomainsById = async () => [
-      { id: 'first-id', name: 'the.first.domain.name', metadataUri: 'http://example.com/what-one' },
-      { id: 'second-id', name: 'the.second.domain.name', metadataUri: 'http://example.com/what-two' },
-    ];
-
-    const loadMetadata = jest.fn((url) => {
-      if (url === 'http://example.com/what-one') {
-        return {
-          title: 'first-title',
-          description: 'first-description',
-        };
-      }
-
-      return null;
-    });
-
-    const client = subject({ getSubdomainsById }, { load: loadMetadata });
-
-    const items = await client.getFeed('the-id');
-
-    expect(items).toMatchObject([
-      { id: 'first-id', title: 'first-title', description: 'first-description' },
-      { id: 'second-id', title: 'the.second.domain.name', description: 'the.second.domain.name' },
-    ]);
-  });
-
-  it('defaults description to title if when null', async () => {
-    const getSubdomainsById = async () => [
-      { id: 'first-id', name: 'the.first.domain.name', metadataUri: 'http://example.com/what-one' },
-      { id: 'second-id', name: 'the.second.domain.name', metadataUri: 'http://example.com/what-two' },
-    ];
-
-    const loadMetadata = jest.fn((url) => {
-      if (url === 'http://example.com/what-one') {
-        return {
-          title: 'first-title',
-          description: 'first-description',
-        };
-      }
-
-      return {
-        title: 'second-title',
-      };
-    });
-
-    const client = subject({ getSubdomainsById }, { load: loadMetadata });
-
-    const items = await client.getFeed('the-id');
-
-    expect(items).toMatchObject([
-      { id: 'first-id', title: 'first-title', description: 'first-description' },
-      { id: 'second-id', title: 'second-title', description: 'second-title' },
-    ]);
-  });
-
-  it('defaults imageUrl to null', async () => {
+  
+  it('imageUrl is falsy', async () => {
     const getSubdomainsById = async () => [
       { id: 'first-id', name: 'the.first.domain.name', metadataUri: 'http://example.com/what-one' },
       { id: 'second-id', name: 'the.second.domain.name', metadataUri: 'http://example.com/what-two' },
@@ -201,7 +119,7 @@ describe('ZnsClient', () => {
 
     const [item] = await client.getFeed('the-id');
 
-    expect(item.imageUrl).toBeNull();
+    expect(item.imageUrl).toBeFalsy();
   });
 
   it('calls getSubdomainsById for root id if no id provided', async () => {
