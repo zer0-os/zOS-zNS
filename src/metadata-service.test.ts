@@ -45,6 +45,13 @@ describe('MetadataService', () => {
     expect(get).toBeCalledWith('http://example.com/ipfs/thehash');
   });
 
+  it('extract ipfs content id', async () => {
+    const service = subject();
+    const result = await service.extractIpfsContentId('ipfs://QmedrtBJfbn2xFTRqM8DEVJpCSwkaQgTHCFfHc6Qhx1234');
+
+    expect(result).toEqual('QmedrtBJfbn2xFTRqM8DEVJpCSwkaQgTHCFfHc6Qhx1234');
+  });
+
   it('returns metadata from endpoint', async () => {
     const body = {
       title: 'the-title',
@@ -52,11 +59,17 @@ describe('MetadataService', () => {
       image: 'http://example.com/my-face.jpg',
     };
 
+    const expectation = {
+      title: body.title,
+      description: body.description,
+      imageUrl: body.image,
+    };
+
     const service = subject({ get: async () => ({ body }) });
 
     const metadata = await service.load('http://example.com/what');
 
-    expect(metadata).toStrictEqual(body);
+    expect(metadata).toStrictEqual(expectation);
   });
 
   it('normalizes the title', async () => {
@@ -105,9 +118,9 @@ describe('MetadataService', () => {
 
     const service = subject({ get: async () => ({ body }) });
 
-    const { image } = await service.load('http://example.com/what');
+    const { imageUrl } = await service.load('http://example.com/what');
 
-    expect(image).toBeNull();
+    expect(imageUrl).toBeNull();
   });
 
   it('image_full becomes image if image is empty string', async () => {
@@ -120,9 +133,9 @@ describe('MetadataService', () => {
 
     const service = subject({ get: async () => ({ body }) });
 
-    const { image } = await service.load('http://example.com/what');
+    const { imageUrl } = await service.load('http://example.com/what');
 
-    expect(image).toBe('http://example.com/my-face.jpg');
+    expect(imageUrl).toBe('http://example.com/my-face.jpg');
   });
 
   it('image_full does not replace image', async () => {
@@ -135,9 +148,9 @@ describe('MetadataService', () => {
 
     const service = subject({ get: async () => ({ body }) });
 
-    const { image } = await service.load('http://example.com/what');
+    const { imageUrl } = await service.load('http://example.com/what');
 
-    expect(image).toBe('http://example.com/my-face.jpg');
+    expect(imageUrl).toBe('http://example.com/my-face.jpg');
   });
 
   it('metadata is null when body is not defined', async () => {
@@ -168,9 +181,9 @@ describe('MetadataService', () => {
 
     const service = subject({ get: async () => ({ body }) }, { ipfsBaseUrl: 'http://example.com/ipfs' });
 
-    const { image } = await service.load('http://example.com/what');
+    const { imageUrl } = await service.load('http://example.com/what');
 
-    expect(image).toBe('http://example.com/ipfs/thehash');
+    expect(imageUrl).toBe('http://example.com/ipfs/thehash');
   });
 
   it('normalizes ipfs url for image when config has trailing slash', async () => {
@@ -181,8 +194,8 @@ describe('MetadataService', () => {
 
     const service = subject({ get: async () => ({ body }) }, { ipfsBaseUrl: 'http://example.com/ipfs/' });
 
-    const { image } = await service.load('http://example.com/what');
+    const { imageUrl } = await service.load('http://example.com/what');
 
-    expect(image).toBe('http://example.com/ipfs/thehash');
+    expect(imageUrl).toBe('http://example.com/ipfs/thehash');
   });
 });

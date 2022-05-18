@@ -1,13 +1,9 @@
 import { utils } from 'ethers';
-import { DomainMetadata } from './metadata-service';
+import { ZnsMetadataService } from './metadata-service';
 import { rootDomainId } from './config';
 
 interface ZnsClientConfig {
   rootDomainId: string;
-}
-
-interface ZnsMetadataService {
-  load: (uri: string) => Promise<DomainMetadata>;
 }
 
 export class ZnsClient {
@@ -17,7 +13,8 @@ export class ZnsClient {
     const domains = await this.provider.getSubdomainsById(id);
 
     for (var domain of domains) {
-      domain.metadata = await this.metadataService.load(domain.metadataUri);
+      domain.metadataUrl = this.metadataService.normalizeUrl(domain.metadataUri);
+      domain.ipfsContentId = this.metadataService.extractIpfsContentId(domain.metadataUri);
     }
 
     return domains.map(this.mapDomainToFeedItem);
@@ -49,15 +46,17 @@ export class ZnsClient {
   }
 
   private mapDomainToFeedItem(domain) {
-    const { id, name, metadata } = domain;
-    const { title, description, image } = (metadata || { title: name });
+    const { id, name, metadata, metadataUrl, ipfsContentId } = domain;
+    const { title, description, imageUrl } = (metadata || { title: name });
 
     return {
       id,
       title,
       description: description || title,
       znsRoute: name,
-      imageUrl: image || null,
+      imageUrl,
+      metadataUrl,
+      ipfsContentId,
     };
   }
 }

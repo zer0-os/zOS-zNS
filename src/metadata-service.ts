@@ -5,7 +5,13 @@ import { rootDomainId, ipfsBaseUrl } from './config';
 export interface DomainMetadata {
   title: string;
   description: string;
-  image: string;
+  imageUrl: string;
+}
+
+export interface ZnsMetadataService {
+  load: (uri: string) => Promise<DomainMetadata>;
+  normalizeUrl: (url: string) => string;
+  extractIpfsContentId: (url: string) => string;
 }
 
 export class MetadataService {
@@ -27,14 +33,19 @@ export class MetadataService {
     return this.normalize(body);
   }
 
-  private normalizeUrl(url: string) {
-    const ipfsRegex = new RegExp(/^ipfs:\/\/(.*)$/);
-
-    if (url.match(ipfsRegex)) {
-      const result = ipfsRegex.exec(url);
-
-      return `${this.ipfsBaseUrl}${result[1]}`;
+  extractIpfsContentId(url: string) {
+    const result = url.match(/^ipfs:\/\/(?<contentId>.*)$/);
+    if (result && result.groups) {
+      return result?.groups['contentId'];
     }
+
+    return null;
+  }
+
+  normalizeUrl(url: string) {
+    const ipfsContentId = this.extractIpfsContentId(url);
+
+    if (ipfsContentId) return `${this.ipfsBaseUrl}${ipfsContentId}`;
 
     return url;
   }
@@ -53,7 +64,7 @@ export class MetadataService {
     return {
       title: domain.title || domain.name || null,
       description: domain.description || null,
-      image: this.normalizeImage(domain),
+      imageUrl: this.normalizeImage(domain) || null,
     }
   }
 
