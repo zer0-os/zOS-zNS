@@ -15,7 +15,7 @@ describe('ZnsClient', () => {
     };
 
     const provider = {
-      getSubdomainsById: () => [],
+      getRecentSubdomainsById: () => [],
       getDomainsByName: () => [],
       ...providerOverrides,
     };
@@ -57,18 +57,18 @@ describe('ZnsClient', () => {
     expect(client.resolveIdFromName('tacos.are.the.best.fruit')).toStrictEqual(expectedId);
   });
 
-  it('calls getSubdomainsById for id', async () => {
+  it('calls getRecentSubdomainsById for id', async () => {
     const id = '0x01';
-    const getSubdomainsById = jest.fn(_ => []);
-    const client = subject({ getSubdomainsById });
+    const getRecentSubdomainsById = jest.fn(_ => []);
+    const client = subject({ getRecentSubdomainsById });
 
     await client.getFeed(id);
 
-    expect(getSubdomainsById).toBeCalledWith(id)
+    expect(getRecentSubdomainsById).toBeCalledWith(id)
   });
 
   it('verifies metadataUrl for domain', async () => {
-    const getSubdomainsById = async () => [
+    const getRecentSubdomainsById = async () => [
       { id: 'first-id', name: 'the.first.domain.name', metadataUri: 'ipfs://QmedrtBJfbn2xFTRqM8DEVJpCSwkaQgTHCFfHc6Q12345' },
     ];
 
@@ -77,7 +77,7 @@ describe('ZnsClient', () => {
       extractIpfsContentId: () => 'QmedrtBJfbn2xFTRqM8DEVJpCSwkaQgTHCFfHc6Q12345',
     };
 
-    const client = subject({ getSubdomainsById }, metadataService);
+    const client = subject({ getRecentSubdomainsById }, metadataService);
 
     const result = await client.getFeed('the-id');
 
@@ -96,7 +96,7 @@ describe('ZnsClient', () => {
   });
   
   it('imageUrl is falsy', async () => {
-    const getSubdomainsById = async () => [
+    const getRecentSubdomainsById = async () => [
       { id: 'first-id', name: 'the.first.domain.name', metadataUri: 'http://example.com/what-one' },
       { id: 'second-id', name: 'the.second.domain.name', metadataUri: 'http://example.com/what-two' },
     ];
@@ -115,31 +115,31 @@ describe('ZnsClient', () => {
       };
     });
 
-    const client = subject({ getSubdomainsById }, { load: loadMetadata });
+    const client = subject({ getRecentSubdomainsById }, { load: loadMetadata });
 
     const [item] = await client.getFeed('the-id');
 
     expect(item.imageUrl).toBeFalsy();
   });
 
-  it('calls getSubdomainsById for root id if no id provided', async () => {
+  it('calls getRecentSubdomainsById for root id if no id provided', async () => {
     const rootDomainId = '0x03';
-    const getSubdomainsById = jest.fn(_ => []);
-    const client = subject({ getSubdomainsById }, {}, { rootDomainId });
+    const getRecentSubdomainsById = jest.fn(_ => []);
+    const client = subject({ getRecentSubdomainsById }, {}, { rootDomainId });
 
     await client.getFeed();
 
-    expect(getSubdomainsById).toBeCalledWith(rootDomainId)
+    expect(getRecentSubdomainsById).toBeCalledWith(rootDomainId)
   });
 
   it('returns domains as feed items', async () => {
-    const getSubdomainsById = async () => [
+    const getRecentSubdomainsById = async () => [
       { id: 'first-id', name: 'the.first.domain.name' },
       { id: 'second-id', name: 'the.second.domain.name' },
       { id: 'third-id', name: 'the.third.domain.name' },
     ];
 
-    const client = subject({ getSubdomainsById });
+    const client = subject({ getRecentSubdomainsById });
 
     const feedItems = [{
       id: 'first-id',
