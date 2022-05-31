@@ -10,7 +10,7 @@ export class ZnsClient {
   constructor(private provider: any, private metadataService: ZnsMetadataService, private config: ZnsClientConfig = { rootDomainId }) { }
 
   async getFeed(id = this.config.rootDomainId) {
-    const domains = await this.provider.getSubdomainsById(id);
+    const domains = await this.provider.getRecentSubdomainsById(id);
 
     for (var domain of domains) {
       domain.metadataUrl = this.metadataService.normalizeUrl(domain.metadataUri);

@@ -1,4 +1,4 @@
-import { SuperAgent, SuperAgentRequest } from 'superagent';
+import { SuperAgent } from 'superagent';
 
 import { rootDomainId, ipfsBaseUrl } from './config';
 
@@ -9,7 +9,9 @@ export interface DomainMetadata {
 }
 
 export interface ZnsMetadataService {
-  normalize?: (domain: object) => object;
+  normalizeUrl: (url: string) => string;
+  extractIpfsContentId: (url: string) => string;
+  normalize: (domain: any) => object;
 }
 
 export class MetadataService {
@@ -49,7 +51,7 @@ export class MetadataService {
     return url;
   }
 
-  normalize(domain: object) {
+  normalize(domain: any) {
     return {
       title: domain.title || domain.name || null,
       description: domain.description || null,
