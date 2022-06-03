@@ -9,14 +9,13 @@ export interface DomainMetadata {
 }
 
 export interface ZnsMetadataService {
+  load: (uri: string) => Promise<DomainMetadata>;
   normalizeUrl: (url: string) => string;
   extractIpfsContentId: (url: string) => string;
-  normalize: (domain: any) => object;
 }
 
 export class MetadataService {
   constructor(private httpClient: SuperAgent, private config = { rootDomainId, ipfsBaseUrl }) { }
-
 
   async load(url: string): Promise<DomainMetadata> {
     const normalizedUrl = this.normalizeUrl(url);
@@ -51,16 +50,6 @@ export class MetadataService {
     return url;
   }
 
-  normalize(domain: any) {
-    return {
-      title: domain.title || domain.name || null,
-      description: domain.description || null,
-      imageUrl: this.normalizeImage(domain) || null,
-      animationUrl: this.normalizeAnimation(domain) || null,
-      attributes: domain.attributes,
-    }
-  }
-
   private get ipfsBaseUrl() {
     let url = this.config.ipfsBaseUrl;
 
@@ -71,12 +60,12 @@ export class MetadataService {
     return url;
   }
 
-  private normalizeAnimation({ animation_url }) {
-    const url = animation_url;
-
-    if (!url) return null;
-
-    return this.normalizeUrl(url);
+  private normalize(domain: any) {
+    return {
+      title: domain.title || domain.name || null,
+      description: domain.description || null,
+      imageUrl: this.normalizeImage(domain) || null,
+    }
   }
 
   private normalizeImage({ image, image_full }) {

@@ -57,16 +57,12 @@ describe('MetadataService', () => {
       title: 'the-title',
       description: 'the-description',
       image: 'http://example.com/my-face.jpg',
-      animation_url: 'http://giphy.com/my-video.mov',
-      attributes: [{ key: 'value' }],
     };
 
     const expectation = {
       title: body.title,
       description: body.description,
       imageUrl: body.image,
-      animationUrl: body.animation_url,
-      attributes: [{ key: 'value' }],
     };
 
     const service = subject({ get: async () => ({ body }) });
