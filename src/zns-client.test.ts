@@ -11,6 +11,7 @@ describe('ZnsClient', () => {
       load: () => ({} as any),
       normalizeUrl: () => null,
       extractIpfsContentId: () => null,
+      normalize: () => null,
       ...metadataServiceOverrides,
     };
 

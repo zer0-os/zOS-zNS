@@ -20,6 +20,15 @@ export class ZnsClient {
     return domains.map(this.mapDomainToFeedItem);
   }
 
+  async getFeedItem(id) {
+    const domain = await this.provider.getDomainById(id);
+
+    domain.metadataUrl = this.metadataService.normalizeUrl(domain.metadataUri);
+    domain.ipfsContentId = this.metadataService.extractIpfsContentId(domain.metadataUri);
+
+    return this.mapDomainToFeedItem(domain);
+  }
+
   async search(pattern) {
     const domains = await this.provider.getDomainsByName(pattern);
 
@@ -46,17 +55,19 @@ export class ZnsClient {
   }
 
   private mapDomainToFeedItem(domain) {
-    const { id, name, metadata, metadataUrl, ipfsContentId } = domain;
+    const { id, name, metadata, metadataUrl, ipfsContentId, metadataName, owner, minter } = domain;
     const { title, description, imageUrl } = (metadata || { title: name });
 
     return {
       id,
-      title,
+      title: metadataName || title,
       description: description || title,
       znsRoute: name,
       imageUrl,
       metadataUrl,
       ipfsContentId,
+      owner,
+      minter
     };
   }
 }
