@@ -11,14 +11,15 @@ export interface DomainMetadata {
 export interface ZnsMetadataService {
   normalizeUrl: (url: string) => string;
   extractIpfsContentId: (url: string) => string;
-  normalize: (domain: any) => object;
+  load: (url: string) => Promise<DomainMetadata>;
 }
 
 export class MetadataService {
   constructor(private httpClient: SuperAgent, private config = { rootDomainId, ipfsBaseUrl }) { }
 
+  load = async (url: string): Promise<DomainMetadata> => {
+    if (!url) return null;
 
-  async load(url: string): Promise<DomainMetadata> {
     const normalizedUrl = this.normalizeUrl(url);
 
     let body: any;
