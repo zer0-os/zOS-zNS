@@ -52,13 +52,13 @@ export class MetadataService {
     return url;
   }
 
-  normalize(domain: any) {
+  normalize(metadata: any) {
     return {
-      title: domain.title || domain.name || null,
-      description: domain.description || null,
-      imageUrl: this.normalizeImage(domain) || null,
-      animationUrl: this.normalizeAnimation(domain) || null,
-      attributes: domain.attributes,
+      title: metadata.title || metadata.name || null,
+      description: metadata.description || null,
+      imageUrl: this.normalizeImage(metadata) || null,
+      animationUrl: this.normalizeAnimation(metadata) || null,
+      attributes: metadata.attributes,
     }
   }
 

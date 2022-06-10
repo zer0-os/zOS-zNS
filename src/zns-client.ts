@@ -12,19 +12,11 @@ export class ZnsClient {
   async getFeed(id = this.config.rootDomainId) {
     const domains = await this.provider.getRecentSubdomainsById(id);
 
-    for (var domain of domains) {
-      domain.metadataUrl = this.metadataService.normalizeUrl(domain.metadataUri);
-      domain.ipfsContentId = this.metadataService.extractIpfsContentId(domain.metadataUri);
-    }
-
     return domains.map(this.mapDomainToFeedItem);
   }
 
   async getFeedItem(id) {
     const domain = await this.provider.getDomainById(id);
-
-    domain.metadataUrl = this.metadataService.normalizeUrl(domain.metadataUri);
-    domain.ipfsContentId = this.metadataService.extractIpfsContentId(domain.metadataUri);
 
     return this.mapDomainToFeedItem(domain);
   }
@@ -54,16 +46,16 @@ export class ZnsClient {
     );
   }
 
-  private mapDomainToFeedItem(domain) {
-    const { id, name, metadata, metadataUrl, ipfsContentId, metadataName, owner, minter } = domain;
-    const { title, description, imageUrl } = (metadata || { title: name });
+  private mapDomainToFeedItem = (domain) => {
+    const { id, name: znsRoute, metadataName: title, owner, minter } = domain;
+
+    const metadataUrl = this.metadataService.normalizeUrl(domain.metadataUri);
+    const ipfsContentId = this.metadataService.extractIpfsContentId(domain.metadataUri);
 
     return {
       id,
-      title: metadataName || title,
-      description: description || title,
-      znsRoute: name,
-      imageUrl,
+      title,
+      znsRoute,
       metadataUrl,
       ipfsContentId,
       owner,

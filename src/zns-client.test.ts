@@ -70,7 +70,12 @@ describe('ZnsClient', () => {
 
   it('verifies metadataUrl for domain', async () => {
     const getRecentSubdomainsById = async () => [
-      { id: 'first-id', name: 'the.first.domain.name', metadataUri: 'ipfs://QmedrtBJfbn2xFTRqM8DEVJpCSwkaQgTHCFfHc6Q12345' },
+      {
+        id: 'first-id',
+        name: 'the.first.domain.name',
+        metadataName: 'the-metadata-name-usually-matches-the-name-in-the-metadata',
+        metadataUri: 'ipfs://QmedrtBJfbn2xFTRqM8DEVJpCSwkaQgTHCFfHc6Q12345'
+      },
     ];
 
     const metadataService = {
@@ -84,18 +89,15 @@ describe('ZnsClient', () => {
 
     expect(result).toMatchObject([
       {
-        'description': 'the.first.domain.name',
         'id': 'first-id',
-        'imageUrl': undefined,
         'ipfsContentId': 'QmedrtBJfbn2xFTRqM8DEVJpCSwkaQgTHCFfHc6Q12345',
         'metadataUrl': 'http://subdomain.domain.com/QmedrtBJfbn2xFTRqM8DEVJpCSwkaQgTHCFfHc6Q12345',
-        'title': 'the.first.domain.name',
+        'title': 'the-metadata-name-usually-matches-the-name-in-the-metadata',
         'znsRoute': 'the.first.domain.name',
       },
-      ]
-    );
+    ]);
   });
-  
+
   it('imageUrl is falsy', async () => {
     const getRecentSubdomainsById = async () => [
       { id: 'first-id', name: 'the.first.domain.name', metadataUri: 'http://example.com/what-one' },
