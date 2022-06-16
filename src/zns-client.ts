@@ -47,7 +47,7 @@ export class ZnsClient {
   }
 
   private mapDomainToFeedItem = (domain) => {
-    const { id, name: znsRoute, metadataName: title, owner, minter } = domain;
+    const { id, name: znsRoute, metadataName: title, owner, minter, contract } = domain;
 
     const metadataUrl = this.metadataService.normalizeUrl(domain.metadataUri);
     const ipfsContentId = this.metadataService.extractIpfsContentId(domain.metadataUri);
@@ -59,7 +59,8 @@ export class ZnsClient {
       metadataUrl,
       ipfsContentId,
       owner,
-      minter
+      minter,
+      contract
     };
   }
 }
