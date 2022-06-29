@@ -1,49 +1,33 @@
-import { utils } from 'ethers';
 import { ZnsMetadataService } from './metadata-service';
-import { rootDomainId } from './config';
-
-interface ZnsClientConfig {
-  rootDomainId: string;
-}
+import { DomainResolver } from '.';
 
 export class ZnsClient {
-  constructor(private provider: any, private metadataService: ZnsMetadataService, private config: ZnsClientConfig = { rootDomainId }) { }
+  constructor(private provider: any, private metadataService: ZnsMetadataService) { }
 
-  async getFeed(id = this.config.rootDomainId) {
+  async getFeed(id: string) {
     const domains = await this.provider.getRecentSubdomainsById(id);
 
     return domains.map(this.mapDomainToFeedItem);
   }
 
-  async getFeedItem(id) {
+  async getFeedItem(id: string) {
     const domain = await this.provider.getDomainById(id);
 
     return this.mapDomainToFeedItem(domain);
   }
 
-  async search(pattern) {
+  async search(pattern: string) {
     const domains = await this.provider.getDomainsByName(pattern);
 
     return domains.map(this.mapDomainToFeedItem);
   }
 
   resolveIdFromName(domainName: string) {
-    const rootId = this.config.rootDomainId;
+    console.warn('resolveIdFromName is deprecated and will be removed in a future version. Please use DomainResolver instead.');
 
-    if (!domainName) return rootId;
+    const resolver = new DomainResolver();
 
-    return domainName
-      .split('.')
-      .reduce((prev, curr) => this.hashPair(prev, utils.id(curr)), rootId);
-  }
-
-  private hashPair(first: string, second: string) {
-    return utils.keccak256(
-      utils.defaultAbiCoder.encode(
-        ['bytes32', 'bytes32'],
-        [utils.arrayify(first), utils.arrayify(second)],
-      ),
-    );
+    return resolver.idFromName(domainName);
   }
 
   private mapDomainToFeedItem = (domain) => {
