@@ -1,10 +1,11 @@
 {
   "name": "@zer0-os/zos-zns",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "zns client for zOS",
   "main": "dist/index.js",
   "scripts": {
     "test": "jest",
+    "test:watch": "jest --watch",
     "build": "tsc --build"
   },
   "author": "",
