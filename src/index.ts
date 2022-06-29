@@ -5,6 +5,8 @@ import { getForProvider } from './config';
 import { MetadataService, ZnsMetadataService } from './metadata-service';
 import { ZnsClient } from './zns-client';
 
+export { DomainResolver } from './domain-resolver';
+
 export type { ZnsMetadataService };
 
 export const metadataService = new MetadataService(superagent);
