@@ -18,6 +18,8 @@ async function extractChainFromProvider(provider) {
       return Chains.Kovan;
     case 'rinkeby':
       return Chains.Rinkeby;
+    case 'goerli':
+      return Chains.Goerli;
     case 'homestead':
       return Chains.MainNet;
   }
@@ -29,6 +31,8 @@ export async function getForProvider(provider: any) {
       return configuration.kovanConfiguration(provider);
     case Chains.Rinkeby:
       return configuration.rinkebyConfiguration(provider);
+    case Chains.Goerli:
+      return configuration.goerliConfiguration(provider);
     case Chains.MainNet:
       return configuration.mainnetConfiguration(provider);
   }
