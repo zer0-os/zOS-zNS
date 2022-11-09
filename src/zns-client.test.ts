@@ -26,7 +26,7 @@ describe('ZnsClient', () => {
 
     await client.getFeed(id);
 
-    expect(getMostRecentSubdomainsById).toBeCalledWith(id, 4999, 0, true)
+    expect(getMostRecentSubdomainsById).toBeCalledWith(id, 150, 0, true)
   });
 
   it('verifies metadataUrl for domain', async () => {
