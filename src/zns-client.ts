@@ -4,8 +4,8 @@ import { DomainResolver } from '.';
 export class ZnsClient {
   constructor(private provider: any, private metadataService: ZnsMetadataService) { }
 
-  async getFeed(id: string) {
-    const domains = await this.provider.getRecentSubdomainsById(id);
+  async getFeed(id: string, limit: number = 150, offset: number = 0) {
+    const domains = await this.provider.getMostRecentSubdomainsById(id, limit, offset, true); // the last param of true indicates to use the DataStore API, the SubGraph API does not support returning more than 1000 records
 
     return domains.map(this.mapDomainToFeedItem);
   }

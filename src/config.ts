@@ -3,7 +3,7 @@ import { configuration } from '@zero-tech/zns-sdk';
 import { Chains } from './chains';
 
 export const rootDomainId = '0x0000000000000000000000000000000000000000000000000000000000000000';
-export const ipfsBaseUrl = 'https://ipfs.fleek.co/ipfs/';
+export const ipfsBaseUrl = 'https://fleek.ipfs.io/ipfs/';
 
 async function extractChainFromProvider(provider) {
   // this also sets the network on the underlying object,
@@ -18,6 +18,8 @@ async function extractChainFromProvider(provider) {
       return Chains.Kovan;
     case 'rinkeby':
       return Chains.Rinkeby;
+    case 'goerli':
+      return Chains.Goerli;
     case 'homestead':
       return Chains.MainNet;
   }
@@ -29,6 +31,8 @@ export async function getForProvider(provider: any) {
       return configuration.kovanConfiguration(provider);
     case Chains.Rinkeby:
       return configuration.rinkebyConfiguration(provider);
+    case Chains.Goerli:
+      return configuration.goerliConfiguration(provider);
     case Chains.MainNet:
       return configuration.mainnetConfiguration(provider);
   }
