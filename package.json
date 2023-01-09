@@ -1,6 +1,6 @@
 {
   "name": "@zer0-os/zos-zns",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "description": "zns client for zOS",
   "main": "dist/index.js",
   "scripts": {
