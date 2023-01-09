@@ -3,7 +3,7 @@ import { configuration } from '@zero-tech/zns-sdk';
 import { Chains } from './chains';
 
 export const rootDomainId = '0x0000000000000000000000000000000000000000000000000000000000000000';
-export const ipfsBaseUrl = 'https://ipfs.fleek.co/ipfs/';
+export const ipfsBaseUrl = 'https://fleek.ipfs.io/ipfs/';
 
 async function extractChainFromProvider(provider) {
   // this also sets the network on the underlying object,
